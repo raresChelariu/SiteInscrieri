@@ -57,3 +57,23 @@ exports.getFormsByEmail = async (req, res) => {
     })
   }
 }
+
+exports.getFormsByName = async (req, res) => {
+  try {
+    const { name } = req.params
+    const forms = await req.db.Form.find({ $or: [
+      { nume: { $regex: name, $options: 'si' } },
+      { prenume: { $regex: name, $options: 'si' } }
+    ]})
+
+    return res.status(HttpStatus.OK).json({
+      success: true,
+      forms
+    })
+  } catch (error) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Something bad happened!'
+    })
+  }
+}
